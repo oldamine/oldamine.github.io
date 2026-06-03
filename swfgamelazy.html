@@ -33,7 +33,7 @@
         }
     </style>
 
-    <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@ruffle-rs/ruffle"></script>
 </head>
 <body>
 
@@ -42,17 +42,22 @@
     </div>
 
     <script>
-        // Wait for the web page and Ruffle script to load completely
         window.addEventListener("DOMContentLoaded", (event) => {
             const ruffle = window.RufflePlayer.newest();
+            
+            // OPTIONAL: Configure Ruffle to look for its .wasm pieces on the CDN too
+            // This prevents your web server from throwing a "404 Not Found" for the engine components
+            window.RufflePlayer.config = {
+                publicPath: "https://cdn.jsdelivr.net/npm/@ruffle-rs/ruffle/"
+            };
+
             const player = ruffle.createPlayer();
             const container = document.getElementById("player");
             
-            // Insert the Ruffle player into our HTML container box
             container.appendChild(player);
             
-            // LOAD YOUR GAME HERE!
-            // Change "my_game.swf" to match the exact name of your compiled Flash game file
+            // LOAD YOUR GAME
+            // Make sure your exported .swf is named exactly "my_game.swf" and sits next to this file
             player.load("lazgame.swf");
         });
     </script>
