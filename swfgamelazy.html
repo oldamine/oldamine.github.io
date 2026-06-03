@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Flash Platformer</title>
+    <style>
+        /* Center the game nicely on the web page */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #ffffff;
+            font-family: sans-serif;
+        }
+
+        /* Style the game container box */
+        #game-container {
+            width: 550px;  /* Matches your Flash stage width */
+            height: 400px; /* Matches your Flash stage height */
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.5);
+            background-color: #000000;
+        }
+
+        /* Make sure Ruffle fills the container perfectly */
+        ruffle-player {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+
+    <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+</head>
+<body>
+
+    <div id="game-container">
+        <div id="player"></div>
+    </div>
+
+    <script>
+        // Wait for the web page and Ruffle script to load completely
+        window.addEventListener("DOMContentLoaded", (event) => {
+            const ruffle = window.RufflePlayer.newest();
+            const player = ruffle.createPlayer();
+            const container = document.getElementById("player");
+            
+            // Insert the Ruffle player into our HTML container box
+            container.appendChild(player);
+            
+            // LOAD YOUR GAME HERE!
+            // Change "my_game.swf" to match the exact name of your compiled Flash game file
+            player.load("lazgame.swf");
+        });
+    </script>
+
+</body>
+</html>
