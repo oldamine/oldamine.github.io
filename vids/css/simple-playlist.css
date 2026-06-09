@@ -5,13 +5,6 @@
 	float:left;		
 	margin-right:0px; 
 }
-#player {
-	display: block;
-    transform: scale(1.5);
-    transform-origin: top left; /* Keeps the player anchored so it doesn't overlap weirdly */
-    margin-bottom: 50%; /* You may need to add margin so it doesn't cover your playlist */
-}
-
 /* player dimensions */
 #player, #player img {
 	display:block;				
