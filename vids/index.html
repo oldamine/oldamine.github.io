@@ -1,69 +1,53 @@
-
-<head>
-
-	<title>SpikeyCactus Online Animation Viewer!</title>
-	<link rel="stylesheet" type="text/css" href="css/common.css" />
-	<link rel="stylesheet" type="text/css" href="css/simple-playlist.css"/>
-	
-	<script src="js/jquery.pack.js"></script>
-	<script src="js/flashembed.min.js"></script>
-	<script src="js/flow.playlist.js"></script>
-	
-
-	<script type="text/javascript"> 
+<html>
+  <head>
+    <title>SpikeyCactus Online Animation Viewer!</title>
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <link rel="stylesheet" type="text/css" href="css/simple-playlist.css">
+    <script src="js/jquery.pack.js" type="edited"></script>
+    <script src="js/flashembed.min.js" type="edited"></script>
+    <script src="js/flow.playlist.js" type="edited"></script>
+    <script type="text/javascript/edited"> 
 	
 		// setup playlist 
 		$(function() {			
 			$("#playlist").playlist("player/FlowPlayer.swf", {initialScale:'scale'});
 		}); 
 		
-	</script>     
-
-</head>
-
-<div id="page">
-
-	<h1>SpikeyCactus Online Animation Viewer!</h1>	
-	<!-- player is initially loaded with splash screen and play button -->
-	<a id="player">
-		<img src="img/3m.jpg" />
-		<div class="play"></div>
-	</a>
-	
-	<!-- this is our playlist -->
-	<div id="playlist">
-
-		<a href="http://oldamine.github.io/vids/flv/AppleBaseballPuppets.flv">
-			<p>A reanimated II scene.</p>		
-			<p class="time">16 seconds</p>
-		</a>
-
-			<a href="http://oldamine.github.io/vids/flv/appelandbasbat.flv">
-			<p> A reanimated II scene with a TWIST!</p>		
-			<p class="time">10 seconds</p>
-		</a>
-		
-		<a href="http://oldamine.github.io/vids/flv/isc.flv">
-			<p>I steal CHEESE!!!!</p>		
-			<p class="time">3 seconds</p>
-		</a>
-		
-		<a href="http://oldamine.github.io/vids/flv/wooper3.flv">
-			<p>Whooper Whooper Whooper!</p>		
-			<p class="time">9 seconds</p>
-		</a>
-		
-		<a href="http://oldamine.github.io/vids/flv/StickBitty.flv">
-			<strong class="new"> NEW!! </strong>
-			<p>Bitty and Stick!</p>		
-			<p class="time">2 seconds</p>
-		</a>
-		
-	</div>
-
-	<!-- clear floatings -->
-	<br clear="all" />
-</div>
-
-
-
+	</script>
+  </head>
+  <body>
+    <div id="page">
+      <h1>SpikeyCactus Online Animation Viewer!</h1>
+      <!-- player is initially loaded with splash screen and play button -->
+      <a id="player">
+        <embed type="application/x-shockwave-flash" src="player/FlowPlayer.swf" width="150%" height="150%" bgcolor="#ffffff" allowfullscreen="true" allowscriptaccess="always" quality="high" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars="config={&quot;initialScale&quot;:&quot;scale&quot;,&quot;videoFile&quot;:&quot;http://oldamine.github.io/vids/flv/AppleBaseballPuppets.flv&quot;}">
+      </a>
+      <!-- this is our playlist -->
+      <div id="playlist">
+        <a href="http://oldamine.github.io/vids/flv/AppleBaseballPuppets.flv" class="">
+          <p>A reanimated II scene.</p>
+          <p class="time">16 seconds</p>
+        </a>
+        <a href="http://oldamine.github.io/vids/flv/appelandbasbat.flv" class="">
+          <p> A reanimated II scene with a TWIST!</p>
+          <p class="time">10 seconds</p>
+        </a>
+        <a href="http://oldamine.github.io/vids/flv/isc.flv" class="">
+          <p>I steal CHEESE!!!!</p>
+          <p class="time">3 seconds</p>
+        </a>
+        <a href="http://oldamine.github.io/vids/flv/wooper3.flv" class="">
+          <p>Whooper Whooper Whooper!</p>
+          <p class="time">9 seconds</p>
+        </a>
+        <a href="http://oldamine.github.io/vids/flv/StickBitty.flv" class="">
+          <strong class="new"> NEW!! </strong>
+          <p>Bitty and Stick!</p>
+          <p class="time">3 seconds</p>
+        </a>
+      </div>
+      <!-- clear floatings -->
+      <br clear="all">
+    </div>
+  </body>
+</html>
