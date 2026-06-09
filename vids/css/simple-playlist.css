@@ -58,11 +58,12 @@ div.play:hover {
 	color:#777;
 	margin-top:5px;
 } 
-#playlist p.link {
+a.link {
+	background:none;
 	float:left;		
 	margin-right:20px;
 } 
-#playlist p.new {
+strong.new {
 		margin:20px;
 } 
 
