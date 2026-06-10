@@ -67,7 +67,19 @@
 <div class="player-container clearfix">
   
   <div class="video-holder">
-    <video id="retro_player" class="video-js vjs-default-skin" controls preload="auto" width="640" height="360" data-setup='{"techOrder": ["flash", "html5"]}'>
+    <video id="retro_player" 
+       class="video-js vjs-default-skin" 
+       controls 
+       preload="auto" 
+       width="640" 
+       height="360" 
+       data-setup='{
+         "techOrder": ["flash", "html5"],
+         "flash": {
+           "swf": "http://vjs.zencdn.net/swf/5.4.2/video-js.swf",
+           "vars": { "allowScriptAccess": "always" }
+         }
+       }'>
       <source src="https://oldamine.github.io/vids/mp4/appelandbasbat.mp4" type="video/mp4">
       <source src="https://oldamine.github.io/vids/webm/appelandbasbat.webm" type="video/webm">
       <source src="https://oldamine.github.io/vids/ogv/appelandbasbat.ogv" type="video/ogg">
