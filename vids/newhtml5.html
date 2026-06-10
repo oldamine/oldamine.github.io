@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Retro Multi-Format Playlist Player</title>
+  <title>SpikeyCactus Online Animation Viewer!</title>
   
   <link href="http://vjs.zencdn.net/5.20.3/video-js.css" rel="stylesheet">
   <script src="http://vjs.zencdn.net/5.20.3/video.js"></script>
@@ -76,13 +76,14 @@
        data-setup='{
          "techOrder": ["flash", "html5"],
          "flash": {
-           "swf": "http://vjs.zencdn.net/swf/5.4.2/video-js.swf",
+           "swf": "player/video-js.swf",
            "vars": { "allowScriptAccess": "always" }
          }
        }'>
       <source src="https://oldamine.github.io/vids/mp4/appelandbasbat.mp4" type="video/mp4">
       <source src="https://oldamine.github.io/vids/webm/appelandbasbat.webm" type="video/webm">
       <source src="https://oldamine.github.io/vids/ogv/appelandbasbat.ogv" type="video/ogg">
+      <source src="https://oldamine.github.io/vids/flv/appelandbasbat.flv" type="video/x-flv">
       <p class="vjs-no-js">
         Your browser does not support HTML5 video or Flash.
       </p>
@@ -105,43 +106,48 @@
   // 3. Define the full 5-video array using ES5 compatible syntax for Opera 12
   var myPlaylist = [
     {
-      title: "Video 1: introduction",
+      title: "A reanimated II scene.",
       sources: [
-        { src: "https://oldamine.github.io/vids/mp4/appelandbasbat.mp4", type: "video/mp4" },
-        { src: "https://oldamine.github.io/vids/webm/appelandbasbat.webm", type: "video/webm" },
-        { src: "https://oldamine.github.io/vids/ogv/appelandbasbat.ogv", type: "video/ogg" }
-      ]
-    },
-    {
-      title: "Video 2: Getting Started",
-      sources: [
-        { src: "https://oldamine.github.io/vids/mp4/AppleBaseballPuppets.mp4", type: "video/mp4" },
+     { src: "https://oldamine.github.io/vids/mp4/AppleBaseballPuppets.mp4", type: "video/mp4" },
         { src: "https://oldamine.github.io/vids/webm/AppleBaseballPuppets.webm", type: "video/webm" },
         { src: "https://oldamine.github.io/vids/ogv/AppleBaseballPuppets.ogv", type: "video/ogg" }
+        { src: "https://oldamine.github.io/vids/flv/AppleBaseballPuppets.flv", type: "video/x-flv" }
       ]
     },
     {
-      title: "Video 3: Core Concepts",
+      title: "A reanimated II scene with a TWIST!",
+      sources: [
+       { src: "https://oldamine.github.io/vids/mp4/appelandbasbat.mp4", type: "video/mp4" },
+        { src: "https://oldamine.github.io/vids/webm/appelandbasbat.webm", type: "video/webm" },
+        { src: "https://oldamine.github.io/vids/ogv/appelandbasbat.ogv", type: "video/ogg" }
+        { src: "https://oldamine.github.io/vids/flv/appelandbasbat.flv", type: "video/x-flv" }
+      ]
+    },
+    {
+      title: "Whooper Whooper Whooper!",
       sources: [
         { src: "https://oldamine.github.io/vids/mp4/wooper3.mp4", type: "video/mp4" },
         { src: "https://oldamine.github.io/vids/webm/wooper3.webm", type: "video/webm" },
         { src: "https://oldamine.github.io/vids/ogv/wooper3.ogv", type: "video/ogg" }
+         { src: "https://oldamine.github.io/vids/flv/wooper3.flv", type: "video/x-flv" }
       ]
     },
     {
-      title: "Video 4: Advanced Tutorial",
+      title: "I steal CHEESE!!!!",
       sources: [
         { src: "https://oldamine.github.io/vids/mp4/isc.mp4", type: "video/mp4" },
         { src: "https://oldamine.github.io/vids/webm/isc.webm", type: "video/webm" },
         { src: "https://oldamine.github.io/vids/ogv/isc.ogv", type: "video/ogg" }
+         { src: "https://oldamine.github.io/vids/flv/isc.flv", type: "video/x-flv" }
       ]
     },
     {
-      title: "Video 5: Summary & Wrap-up",
+      title: "New! Bitty and Stick!",
       sources: [
         { src: "https://oldamine.github.io/vids/mp4/StickBitty.mp4", type: "video/mp4" },
         { src: "https://oldamine.github.io/vids/webm/StickBitty.webm", type: "video/webm" },
         { src: "https://oldamine.github.io/vids/ogv/StickBitty.ogv", type: "video/ogg" }
+       { src: "https://oldamine.github.io/vids/flv/StickBitty.flv", type: "video/x-flv" }
       ]
     }
   ];
