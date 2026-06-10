@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Retro Multi-Format Playlist Player</title>
+  
+  <link href="http://vjs.zencdn.net/5.20.3/video-js.css" rel="stylesheet">
+  <script src="http://vjs.zencdn.net/5.20.3/video.js"></script>
+
+  <style>
+    /* Side-by-side player layout designed for older rendering engines */
+    .player-container {
+      display: block;
+      max-width: 900px;
+      margin: 20px auto;
+      font-family: Arial, sans-serif;
+    }
+    .video-holder {
+      float: left;
+      width: 640px;
+    }
+    .playlist-holder {
+      float: left;
+      width: 240px;
+      margin-left: 20px;
+      background: #222;
+      color: #fff;
+      box-sizing: border-box;
+    }
+    .playlist-holder h3 {
+      margin: 0;
+      padding: 10px;
+      background: #333;
+      font-size: 16px;
+      border-bottom: 1px solid #444;
+    }
+    .playlist-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+    .playlist-item {
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 1px solid #333;
+      font-size: 14px;
+    }
+    .playlist-item:hover {
+      background: #444;
+    }
+    .playlist-item.active {
+      background: #0070FF;
+      color: #fff;
+    }
+    /* Standard layout clearfix for older browsers */
+    .clearfix::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+  </style>
+</head>
+<body>
+
+<div class="player-container clearfix">
+  
+  <div class="video-holder">
+    <video id="retro_player" class="video-js vjs-default-skin" controls preload="auto" width="640" height="360" data-setup='{"techOrder": ["flash", "html5"]}'>
+      <source src="https://oldamine.github.io/vids/mp4/appelandbasbat.mp4" type="video/mp4">
+      <source src="https://oldamine.github.io/vids/webm/appelandbasbat.webm" type="video/webm">
+      <source src="https://oldamine.github.io/vids/ogv/appelandbasbat.ogv" type="video/ogg">
+      <p class="vjs-no-js">
+        Your browser does not support HTML5 video or Flash.
+      </p>
+    </video>
+  </div>
+
+  <div class="playlist-holder">
+    <h3>Video Playlist</h3>
+    <ul id="playlist" class="playlist-list">
+      </ul>
+  </div>
+
+</div>
+
+<script>
+  // 2. Set Flash fallback SWF location. 
+  // Swap this string to "js/video-js.swf" if you choose to host the file locally.
+  videojs.options.flash.swf = "player/video-js.swf";
+
+  // 3. Define the full 5-video array using ES5 compatible syntax for Opera 12
+  var myPlaylist = [
+    {
+      title: "Video 1: introduction",
+      sources: [
+        { src: "https://oldamine.github.io/vids/mp4/appelandbasbat.mp4", type: "video/mp4" },
+        { src: "https://oldamine.github.io/vids/webm/appelandbasbat.webm", type: "video/webm" },
+        { src: "https://oldamine.github.io/vids/ogv/appelandbasbat.ogv", type: "video/ogg" }
+      ]
+    },
+    {
+      title: "Video 2: Getting Started",
+      sources: [
+        { src: "https://oldamine.github.io/vids/mp4/AppleBaseballPuppets.mp4", type: "video/mp4" },
+        { src: "https://oldamine.github.io/vids/webm/AppleBaseballPuppets.webm", type: "video/webm" },
+        { src: "https://oldamine.github.io/vids/ogv/AppleBaseballPuppets.ogv", type: "video/ogg" }
+      ]
+    },
+    {
+      title: "Video 3: Core Concepts",
+      sources: [
+        { src: "https://oldamine.github.io/vids/mp4/wooper3.mp4", type: "video/mp4" },
+        { src: "https://oldamine.github.io/vids/webm/wooper3.webm", type: "video/webm" },
+        { src: "https://oldamine.github.io/vids/ogv/wooper3.ogv", type: "video/ogg" }
+      ]
+    },
+    {
+      title: "Video 4: Advanced Tutorial",
+      sources: [
+        { src: "https://oldamine.github.io/vids/mp4/isc.mp4", type: "video/mp4" },
+        { src: "https://oldamine.github.io/vids/webm/isc.webm", type: "video/webm" },
+        { src: "https://oldamine.github.io/vids/ogv/isc.ogv", type: "video/ogg" }
+      ]
+    },
+    {
+      title: "Video 5: Summary & Wrap-up",
+      sources: [
+        { src: "https://oldamine.github.io/vids/mp4/StickBitty.mp4", type: "video/mp4" },
+        { src: "https://oldamine.github.io/vids/webm/StickBitty.webm", type: "video/webm" },
+        { src: "https://oldamine.github.io/vids/ogv/StickBitty.ogv", type: "video/ogg" }
+      ]
+    }
+  ];
+
+  var currentTrackIndex = 0;
+  var player = videojs("retro_player");
+
+  // 4. Generate the playlist interface items
+  function buildPlaylistUI() {
+    var listElement = document.getElementById("playlist");
+    listElement.innerHTML = ""; 
+
+    for (var i = 0; i < myPlaylist.length; i++) {
+      var li = document.createElement("li");
+      li.className = "playlist-item";
+      if (i === currentTrackIndex) {
+        li.className += " active";
+      }
+      li.innerHTML = myPlaylist[i].title;
+      
+      // IIFE pattern to preserve index scope safely in older Javascript engines
+      (function(index) {
+        li.onclick = function() {
+          changeTrack(index);
+        };
+      })(i);
+
+      listElement.appendChild(li);
+    }
+  }
+
+  // 5. Native/Flash cross-compatible video loading function
+  function changeTrack(index) {
+    if (index < 0 || index >= myPlaylist.length) return;
+    
+    currentTrackIndex = index;
+    buildPlaylistUI(); 
+
+    // Update player sources. Video.js automatically matches browser format compatibility.
+    player.src(myPlaylist[index].sources);
+    player.load();
+    
+    player.ready(function() {
+      player.play();
+    });
+  }
+
+  // 6. Listen for track ending to automatically trigger the next queue entry
+  player.on("ended", function() {
+    var nextIndex = currentTrackIndex + 1;
+    if (nextIndex < myPlaylist.length) {
+      changeTrack(nextIndex);
+    }
+  });
+
+  // Run initial UI build when the video.js wrapper finishes setup
+  player.ready(function() {
+    buildPlaylistUI();
+  });
+</script>
+
+</body>
+</html>
