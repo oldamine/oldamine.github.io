@@ -4,16 +4,33 @@
   <meta charset="utf-8">
   <title>SpikeyCactus Online Animation Viewer!</title>
   
-  <link href="http://vjs.zencdn.net/5.20.3/video-js.css" rel="stylesheet">
-  <script src="http://vjs.zencdn.net/5.20.3/video.js"></script>
+  <link href="https://vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
+  <script src="https://vjs.zencdn.net/4.12/video.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flv.js/1.6.2/flv.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/videojs-flvjs@0.3.1/dist/videojs-flvjs.min.js"></script>
 
   <style>
-    /* Side-by-side player layout designed for older rendering engines */
+    /* Global layout fix for legacy Firefox layout engine sizing */
+    *, *:before, *:after {
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+
+    /* ========================================================
+       DEFAULT DARK THEME (Pure old-school CSS for old browsers)
+       ======================================================== */
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
     .player-container {
       display: block;
       max-width: 900px;
       margin: 20px auto;
-      font-family: Arial, sans-serif;
     }
     .video-holder {
       float: left;
@@ -25,7 +42,7 @@
       margin-left: 20px;
       background: #222;
       color: #fff;
-      box-sizing: border-box;
+      border: 1px solid #444;
     }
     .playlist-holder h3 {
       margin: 0;
@@ -34,11 +51,54 @@
       font-size: 16px;
       border-bottom: 1px solid #444;
     }
+    .theme-toggle-box {
+      padding: 10px;
+      background: #222;
+      border-bottom: 1px solid #444;
+      font-size: 12px;
+    }
+    /* Simple inline layout for old engine compatibility */
+    .theme-toggle-label {
+      float: left;
+      line-height: 20px;
+    }
+    .switch {
+      float: right;
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 20px;
+    }
+    .switch input { 
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      border-radius: 20px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #0070FF;
+    }
     .playlist-list {
       list-style: none;
       margin: 0;
       padding: 0;
-      max-height: 320px;
+      max-height: 278px;
       overflow-y: auto;
     }
     .playlist-item {
@@ -54,6 +114,74 @@
       background: #0070FF;
       color: #fff;
     }
+    .meta-holder {
+      margin-top: 15px;
+      padding: 15px;
+      background: #1c1c1c;
+      border: 1px solid #333;
+      border-radius: 4px;
+    }
+    .meta-holder h4 {
+      margin: 0 0 8px 0;
+      color: #0070FF;
+    }
+    .meta-holder p {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: #ccc;
+      line-height: 1.4;
+    }
+    .meta-holder a {
+      color: #3498db;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 13px;
+    }
+    .meta-holder a:hover {
+      text-decoration: underline;
+    }
+
+    /* ========================================================
+       RETRO LIGHT THEME OVERRIDES (Explicit classes for safety)
+       ======================================================== */
+    body.light-mode {
+      background-color: #f0f0f0;
+      color: #111;
+    }
+    body.light-mode .playlist-holder {
+      background: #fff;
+      color: #111;
+      border-color: #ccc;
+    }
+    body.light-mode .playlist-holder h3 {
+      background: #e0e0e0;
+      border-bottom-color: #ccc;
+    }
+    body.light-mode .theme-toggle-box {
+      background: #fff;
+      border-bottom-color: #ccc;
+    }
+    body.light-mode .playlist-item {
+      border-bottom-color: #eee;
+    }
+    body.light-mode .playlist-item:hover {
+      background: #f5f5f5;
+    }
+    body.light-mode .playlist-item.active {
+      background: #0070FF;
+      color: #fff;
+    }
+    body.light-mode .meta-holder {
+      background: #fafafa;
+      border-color: #ccc;
+    }
+    body.light-mode .meta-holder p {
+      color: #444;
+    }
+    body.light-mode .meta-holder a {
+      color: #2980b9;
+    }
+
     /* Standard layout clearfix for older browsers */
     .clearfix::after {
       content: "";
@@ -67,19 +195,8 @@
 <div class="player-container clearfix">
   
   <div class="video-holder">
-    <video id="retro_player" 
-       class="video-js vjs-default-skin" 
-       controls 
-       preload="auto" 
-       width="640" 
-       height="360" 
-       data-setup='{
-         "techOrder": ["flash", "html5"],
-         "flash": {
-           "swf": "player/video-js.swf",
-           "vars": { "allowScriptAccess": "always" }
-         }
-       }'>
+    <video id="retro_player" class="video-js vjs-default-skin" controls preload="auto" width="640" height="360" 
+           data-setup='{"techOrder": ["html5", "flash", "flvjs"], "flvjs": {"mediaDataSource": {"isLive": false, "cors": true}}}'>
       <source src="https://oldamine.github.io/vids/mp4/appelandbasbat.mp4" type="video/mp4">
       <source src="https://oldamine.github.io/vids/webm/appelandbasbat.webm" type="video/webm">
       <source src="https://oldamine.github.io/vids/ogv/appelandbasbat.ogv" type="video/ogg">
@@ -88,66 +205,87 @@
         Your browser does not support HTML5 video or Flash.
       </p>
     </video>
+
+    <div class="meta-holder">
+      <h4 id="video-title">Loading Title...</h4>
+      <p id="video-description">Loading description...</p>
+      <a id="video-link" href="#" target="_blank">Download or Source Link</a>
+    </div>
   </div>
 
   <div class="playlist-holder">
-    <h3>Video Playlist</h3>
-    <ul id="playlist" class="playlist-list">
-      </ul>
+    <h3>SpikeyCactus Online Animation Viewer! (SOAV)</h3>
+    
+    <div class="theme-toggle-box clearfix">
+      <div class="theme-toggle-label">Light Mode</div>
+      <label class="switch">
+        <input type="checkbox" id="theme-switch" onchange="toggleTheme()">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <ul id="playlist" class="playlist-list"></ul>
   </div>
 
 </div>
 
 <script>
-  // 2. Set Flash fallback SWF location. 
-  // Swap this string to "js/video-js.swf" if you choose to host the file locally.
   videojs.options.flash.swf = "player/video-js.swf";
 
-  // 3. Define the full 5-video array using ES5 compatible syntax for Opera 12
   var myPlaylist = [
     {
       title: "A reanimated II scene.",
+      description: "Put the description for this scene inside these quotes.",
+      link: "https://oldamine.github.io/vids/flas/AppleBaseballPuppets.fla",
       sources: [
-     { src: "https://oldamine.github.io/vids/mp4/AppleBaseballPuppets.mp4", type: "video/mp4" },
+        { src: "https://oldamine.github.io/vids/mp4/AppleBaseballPuppets.mp4", type: "video/mp4" },
         { src: "https://oldamine.github.io/vids/webm/AppleBaseballPuppets.webm", type: "video/webm" },
-        { src: "https://oldamine.github.io/vids/ogv/AppleBaseballPuppets.ogv", type: "video/ogg" }
+        { src: "https://oldamine.github.io/vids/ogv/AppleBaseballPuppets.ogv", type: "video/ogg" },
         { src: "https://oldamine.github.io/vids/flv/AppleBaseballPuppets.flv", type: "video/x-flv" }
       ]
     },
     {
       title: "A reanimated II scene with a TWIST!",
+      description: "Idea by the TheRetroMacaque ",
+      link: "https://oldamine.github.io/vids/flas/AppleBaseballPuppetsTwist.fla",
       sources: [
-       { src: "https://oldamine.github.io/vids/mp4/appelandbasbat.mp4", type: "video/mp4" },
+        { src: "https://oldamine.github.io/vids/mp4/appelandbasbat.mp4", type: "video/mp4" },
         { src: "https://oldamine.github.io/vids/webm/appelandbasbat.webm", type: "video/webm" },
-        { src: "https://oldamine.github.io/vids/ogv/appelandbasbat.ogv", type: "video/ogg" }
+        { src: "https://oldamine.github.io/vids/ogv/appelandbasbat.ogv", type: "video/ogg" },
         { src: "https://oldamine.github.io/vids/flv/appelandbasbat.flv", type: "video/x-flv" }
       ]
     },
     {
       title: "Whooper Whooper Whooper!",
+      description: "Put the description for the Whooper animation inside these quotes.",
+      link: "https://oldamine.github.io/vids/flas/wooper3.0.fla",
       sources: [
         { src: "https://oldamine.github.io/vids/mp4/wooper3.mp4", type: "video/mp4" },
         { src: "https://oldamine.github.io/vids/webm/wooper3.webm", type: "video/webm" },
-        { src: "https://oldamine.github.io/vids/ogv/wooper3.ogv", type: "video/ogg" }
-         { src: "https://oldamine.github.io/vids/flv/wooper3.flv", type: "video/x-flv" }
+        { src: "https://oldamine.github.io/vids/ogv/wooper3.ogv", type: "video/ogg" },
+        { src: "https://oldamine.github.io/vids/flv/wooper3.flv", type: "video/x-flv" }
       ]
     },
     {
       title: "I steal CHEESE!!!!",
+      description: "Put the description for the cheese thief animation inside these quotes.",
+      link: "https://oldamine.github.io/vids/flas/isc.fla",
       sources: [
         { src: "https://oldamine.github.io/vids/mp4/isc.mp4", type: "video/mp4" },
         { src: "https://oldamine.github.io/vids/webm/isc.webm", type: "video/webm" },
-        { src: "https://oldamine.github.io/vids/ogv/isc.ogv", type: "video/ogg" }
-         { src: "https://oldamine.github.io/vids/flv/isc.flv", type: "video/x-flv" }
+        { src: "https://oldamine.github.io/vids/ogv/isc.ogv", type: "video/ogg" },
+        { src: "https://oldamine.github.io/vids/flv/isc.flv", type: "video/x-flv" }
       ]
     },
     {
       title: "New! Bitty and Stick!",
+      description: "Put the description for Bitty and Stick inside these quotes.",
+      link: "https://oldamine.github.io/vids/flas/StickBitty.fla",
       sources: [
         { src: "https://oldamine.github.io/vids/mp4/StickBitty.mp4", type: "video/mp4" },
         { src: "https://oldamine.github.io/vids/webm/StickBitty.webm", type: "video/webm" },
-        { src: "https://oldamine.github.io/vids/ogv/StickBitty.ogv", type: "video/ogg" }
-       { src: "https://oldamine.github.io/vids/flv/StickBitty.flv", type: "video/x-flv" }
+        { src: "https://oldamine.github.io/vids/ogv/StickBitty.ogv", type: "video/ogg" },
+        { src: "https://oldamine.github.io/vids/flv/StickBitty.flv", type: "video/x-flv" }
       ]
     }
   ];
@@ -155,7 +293,15 @@
   var currentTrackIndex = 0;
   var player = videojs("retro_player");
 
-  // 4. Generate the playlist interface items
+  function toggleTheme() {
+    var checkbox = document.getElementById("theme-switch");
+    if (checkbox.checked) {
+      document.body.className = "light-mode";
+    } else {
+      document.body.className = "";
+    }
+  }
+
   function buildPlaylistUI() {
     var listElement = document.getElementById("playlist");
     listElement.innerHTML = ""; 
@@ -163,49 +309,58 @@
     for (var i = 0; i < myPlaylist.length; i++) {
       var li = document.createElement("li");
       li.className = "playlist-item";
-      if (i === currentTrackIndex) {
-        li.className += " active";
-      }
+      if (i === currentTrackIndex) { li.className += " active"; }
       li.innerHTML = myPlaylist[i].title;
       
-      // IIFE pattern to preserve index scope safely in older Javascript engines
       (function(index) {
-        li.onclick = function() {
-          changeTrack(index);
-        };
+        li.onclick = function() { changeTrack(index); };
       })(i);
 
       listElement.appendChild(li);
     }
   }
 
-  // 5. Native/Flash cross-compatible video loading function
+  function updateMetadataUI(track) {
+    document.getElementById("video-title").innerHTML = track.title;
+    
+    if (track.description) {
+      document.getElementById("video-description").innerHTML = track.description;
+      document.getElementById("video-description").style.display = "block";
+    } else {
+      document.getElementById("video-description").style.display = "none";
+    }
+
+    if (track.link) {
+      document.getElementById("video-link").setAttribute("href", track.link);
+      document.getElementById("video-link").innerHTML = "Download File / View Source Link";
+      document.getElementById("video-link").style.display = "inline-block";
+    } else {
+      document.getElementById("video-link").style.display = "none";
+    }
+  }
+
   function changeTrack(index) {
     if (index < 0 || index >= myPlaylist.length) return;
     
     currentTrackIndex = index;
     buildPlaylistUI(); 
+    updateMetadataUI(myPlaylist[index]);
 
-    // Update player sources. Video.js automatically matches browser format compatibility.
     player.src(myPlaylist[index].sources);
-    player.load();
     
     player.ready(function() {
       player.play();
     });
   }
 
-  // 6. Listen for track ending to automatically trigger the next queue entry
   player.on("ended", function() {
     var nextIndex = currentTrackIndex + 1;
-    if (nextIndex < myPlaylist.length) {
-      changeTrack(nextIndex);
-    }
+    if (nextIndex < myPlaylist.length) { changeTrack(nextIndex); }
   });
 
-  // Run initial UI build when the video.js wrapper finishes setup
   player.ready(function() {
     buildPlaylistUI();
+    updateMetadataUI(myPlaylist[currentTrackIndex]);
   });
 </script>
 
