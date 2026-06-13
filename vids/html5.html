@@ -4,15 +4,11 @@
   <meta charset="utf-8">
   <title>SpikeyCactus Online Animation Viewer!</title>
   
-  <link href="https://vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
-  <script src="https://vjs.zencdn.net/4.12/video.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/flv.js/1.6.2/flv.min.js"></script>
-
-  <script src="https://cdn.jsdelivr.net/npm/videojs-flvjs@0.3.1/dist/videojs-flvjs.min.js"></script>
+  <link href="http://vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
+  <script src="http://vjs.zencdn.net/4.12/video.js"></script>
 
   <style>
-    /* Global layout fix for legacy Firefox layout engine sizing */
+    /* Global layout fix for legacy Firefox/Opera layout engine sizing */
     *, *:before, *:after {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
@@ -20,48 +16,60 @@
     }
 
     /* ========================================================
-       DEFAULT DARK THEME (Pure old-school CSS for old browsers)
+       BASE LIGHT THEME (Default View)
        ======================================================== */
     body {
-      background-color: #111;
-      color: #fff;
+      background-color: #f0f0f0;
+      color: #111;
       font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
     }
+    
     .player-container {
       display: block;
       max-width: 900px;
       margin: 20px auto;
     }
+    
     .video-holder {
       float: left;
       width: 640px;
     }
+    
     .playlist-holder {
       float: left;
       width: 240px;
       margin-left: 20px;
-      background: #222;
-      color: #fff;
-      border: 1px solid #444;
+      background: #fff;
+      color: #111;
+      border: 1px solid #ccc;
     }
+    
     .playlist-holder h3 {
       margin: 0;
       padding: 10px;
-      background: #333;
+      background: #e0e0e0;
       font-size: 16px;
-      border-bottom: 1px solid #444;
+      border-bottom: 1px solid #ccc;
     }
+    
+    /* ========================================================
+       CROSS-BROWSER COMPATIBLE SLIDER COMPONENT
+       ======================================================== */
     .theme-toggle-box {
       padding: 10px;
-      background: #222;
-      border-bottom: 1px solid #444;
+      background: #fff;
+      border-bottom: 1px solid #ccc;
       font-size: 12px;
     }
-    /* Simple inline layout for old engine compatibility */
+    
     .theme-toggle-label {
       float: left;
       line-height: 20px;
+      font-weight: bold;
     }
+    
     .switch {
       float: right;
       position: relative;
@@ -69,21 +77,34 @@
       width: 40px;
       height: 20px;
     }
+    
+    /* Invisible layer to catch clicks on old layout engines */
     .switch input { 
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      cursor: pointer;
+      z-index: 10;
       opacity: 0;
-      width: 0;
-      height: 0;
+      filter: alpha(opacity=0);
     }
+    
+    /* The slider track track */
     .slider {
       position: absolute;
-      cursor: pointer;
       top: 0; left: 0; right: 0; bottom: 0;
       background-color: #ccc;
       border-radius: 20px;
+      z-index: 1;
     }
-    .slider:before {
+    
+    /* The physical knob element (Fixes Opera/Firefox repaint bugs) */
+    .knob {
       position: absolute;
-      content: "";
       height: 14px;
       width: 14px;
       left: 3px;
@@ -91,9 +112,19 @@
       background-color: white;
       border-radius: 50%;
     }
+    
+    /* Checked States */
     input:checked + .slider {
       background-color: #0070FF;
     }
+    
+    input:checked + .slider .knob {
+      left: 23px;
+    }
+
+    /* ========================================================
+       PLAYLIST AND META CONTAINER STYLES
+       ======================================================== */
     .playlist-list {
       list-style: none;
       margin: 0;
@@ -101,88 +132,110 @@
       max-height: 278px;
       overflow-y: auto;
     }
+    
     .playlist-item {
-      padding: 10px;
+      display: block;
+      padding: 12px 10px;
       cursor: pointer;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid #eee;
       font-size: 14px;
+      line-height: 1.2;
+      clear: both;
     }
+    
     .playlist-item:hover {
-      background: #444;
+      background: #f5f5f5;
     }
+    
     .playlist-item.active {
       background: #0070FF;
       color: #fff;
     }
+    
     .meta-holder {
       margin-top: 15px;
       padding: 15px;
-      background: #1c1c1c;
-      border: 1px solid #333;
+      background: #fafafa;
+      border: 1px solid #ccc;
       border-radius: 4px;
+      clear: both;
     }
+    
     .meta-holder h4 {
       margin: 0 0 8px 0;
       color: #0070FF;
     }
+    
     .meta-holder p {
       margin: 0 0 10px 0;
       font-size: 14px;
-      color: #ccc;
+      color: #444;
       line-height: 1.4;
     }
-    .meta-holder a {
-      color: #3498db;
+    
+    .meta-links a {
+      color: #2980b9;
       text-decoration: none;
       font-weight: bold;
       font-size: 13px;
+      display: inline-block;
+      margin-right: 15px;
+      padding: 4px 8px;
+      border: 1px solid #ccc;
+      background: #eee;
+      border-radius: 3px;
     }
-    .meta-holder a:hover {
-      text-decoration: underline;
+    
+    .meta-links a:hover {
+      background: #ddd;
     }
 
     /* ========================================================
-       RETRO LIGHT THEME OVERRIDES (Explicit classes for safety)
+       NIGHT MODE STYLES
        ======================================================== */
-    body.light-mode {
-      background-color: #f0f0f0;
-      color: #111;
+    body.night-mode {
+      background-color: #111;
+      color: #fff;
     }
-    body.light-mode .playlist-holder {
-      background: #fff;
-      color: #111;
-      border-color: #ccc;
+    body.night-mode .playlist-holder {
+      background: #222;
+      color: #fff;
+      border-color: #444;
     }
-    body.light-mode .playlist-holder h3 {
-      background: #e0e0e0;
-      border-bottom-color: #ccc;
+    body.night-mode .playlist-holder h3 {
+      background: #333;
+      border-bottom-color: #444;
     }
-    body.light-mode .theme-toggle-box {
-      background: #fff;
-      border-bottom-color: #ccc;
+    body.night-mode .theme-toggle-box {
+      background: #222;
+      border-bottom-color: #444;
     }
-    body.light-mode .playlist-item {
-      border-bottom-color: #eee;
+    body.night-mode .playlist-item {
+      border-bottom-color: #333;
     }
-    body.light-mode .playlist-item:hover {
-      background: #f5f5f5;
+    body.night-mode .playlist-item:hover {
+      background: #444;
     }
-    body.light-mode .playlist-item.active {
+    body.night-mode .playlist-item.active {
       background: #0070FF;
       color: #fff;
     }
-    body.light-mode .meta-holder {
-      background: #fafafa;
-      border-color: #ccc;
+    body.night-mode .meta-holder {
+      background: #1c1c1c;
+      border-color: #333;
     }
-    body.light-mode .meta-holder p {
-      color: #444;
+    body.night-mode .meta-holder p {
+      color: #ccc;
     }
-    body.light-mode .meta-holder a {
-      color: #2980b9;
+    body.night-mode .meta-links a {
+      color: #3498db;
+      background: #222;
+      border-color: #444;
+    }
+    body.night-mode .meta-links a:hover {
+      background: #333;
     }
 
-    /* Standard layout clearfix for older browsers */
     .clearfix::after {
       content: "";
       clear: both;
@@ -196,7 +249,7 @@
   
   <div class="video-holder">
     <video id="retro_player" class="video-js vjs-default-skin" controls preload="auto" width="640" height="360" 
-           data-setup='{"techOrder": ["html5", "flash", "flvjs"], "flvjs": {"mediaDataSource": {"isLive": false, "cors": true}}}'>
+           data-setup='{"techOrder": ["html5", "flash"]}'>
       <source src="https://oldamine.github.io/vids/mp4/appelandbasbat.mp4" type="video/mp4">
       <source src="https://oldamine.github.io/vids/webm/appelandbasbat.webm" type="video/webm">
       <source src="https://oldamine.github.io/vids/ogv/appelandbasbat.ogv" type="video/ogg">
@@ -209,18 +262,23 @@
     <div class="meta-holder">
       <h4 id="video-title">Loading Title...</h4>
       <p id="video-description">Loading description...</p>
-      <a id="video-link" href="#" target="_blank">Download or Source Link</a>
+      <div class="meta-links">
+        <a id="video-source-link" href="#" target="_blank">Download the FLA! (Flash CS6 or higher)</a>
+        <a id="video-download-link" href="#" target="_blank" download>Download UNCOMPRESSED Video</a>
+      </div>
     </div>
   </div>
 
   <div class="playlist-holder">
-    <h3>SpikeyCactus Online Animation Viewer! (SOAV)</h3>
+    <h3>SpikeyCactus Online Animation Viewer!</h3>
     
     <div class="theme-toggle-box clearfix">
-      <div class="theme-toggle-label">Light Mode</div>
+      <div class="theme-toggle-label">Night Mode</div>
       <label class="switch">
         <input type="checkbox" id="theme-switch" onchange="toggleTheme()">
-        <span class="slider"></span>
+        <span class="slider">
+          <span class="knob"></span>
+        </span>
       </label>
     </div>
 
@@ -234,9 +292,10 @@
 
   var myPlaylist = [
     {
-      title: "A reanimated II scene.",
-      description: "Put the description for this scene inside these quotes.",
-      link: "https://oldamine.github.io/vids/flas/AppleBaseballPuppets.fla",
+      title: "AppleBaseballPuppets.mp4",
+      description: "A reanimated II scene.",
+      sourceLink: "https://oldamine.github.io/vids/flas/AppleBaseballPuppets.fla",
+      downloadLink: "https://oldamine.github.io/vids/mp4/AppleBaseballPuppets.mp4",
       sources: [
         { src: "https://oldamine.github.io/vids/mp4/AppleBaseballPuppets.mp4", type: "video/mp4" },
         { src: "https://oldamine.github.io/vids/webm/AppleBaseballPuppets.webm", type: "video/webm" },
@@ -245,9 +304,10 @@
       ]
     },
     {
-      title: "A reanimated II scene with a TWIST!",
-      description: "Idea by the TheRetroMacaque ",
-      link: "https://oldamine.github.io/vids/flas/AppleBaseballPuppetsTwist.fla",
+      title: "AppleBaseballPuppets OR is IT???",
+      description: "A reanimated II scene with a TWIST??",
+      sourceLink: "https://oldamine.github.io/vids/flas/AppleBaseballPuppetsTwist.fla",
+      downloadLink: "https://oldamine.github.io/vids/mp4/appelandbasbat.mp4",
       sources: [
         { src: "https://oldamine.github.io/vids/mp4/appelandbasbat.mp4", type: "video/mp4" },
         { src: "https://oldamine.github.io/vids/webm/appelandbasbat.webm", type: "video/webm" },
@@ -257,8 +317,9 @@
     },
     {
       title: "Whooper Whooper Whooper!",
-      description: "Put the description for the Whooper animation inside these quotes.",
-      link: "https://oldamine.github.io/vids/flas/wooper3.0.fla",
+      description: "I mean what is there to even say?",
+      sourceLink: "https://oldamine.github.io/vids/flas/wooper3.0.fla",
+      downloadLink: "https://oldamine.github.io/vids/mp4/wooper3.mp4",
       sources: [
         { src: "https://oldamine.github.io/vids/mp4/wooper3.mp4", type: "video/mp4" },
         { src: "https://oldamine.github.io/vids/webm/wooper3.webm", type: "video/webm" },
@@ -268,8 +329,9 @@
     },
     {
       title: "I steal CHEESE!!!!",
-      description: "Put the description for the cheese thief animation inside these quotes.",
-      link: "https://oldamine.github.io/vids/flas/isc.fla",
+      description: "Man, Listen to the title!",
+      sourceLink: "https://oldamine.github.io/vids/flas/isc.fla",
+      downloadLink: "https://oldamine.github.io/vids/mp4/isc.mp4",
       sources: [
         { src: "https://oldamine.github.io/vids/mp4/isc.mp4", type: "video/mp4" },
         { src: "https://oldamine.github.io/vids/webm/isc.webm", type: "video/webm" },
@@ -279,8 +341,9 @@
     },
     {
       title: "New! Bitty and Stick!",
-      description: "Put the description for Bitty and Stick inside these quotes.",
-      link: "https://oldamine.github.io/vids/flas/StickBitty.fla",
+      description: "A one A two A STICK A BIT",
+      sourceLink: "https://oldamine.github.io/vids/flas/StickBitty.fla",
+      downloadLink: "https://oldamine.github.io/vids/mp4/StickBitty.mp4",
       sources: [
         { src: "https://oldamine.github.io/vids/mp4/StickBitty.mp4", type: "video/mp4" },
         { src: "https://oldamine.github.io/vids/webm/StickBitty.webm", type: "video/webm" },
@@ -296,7 +359,7 @@
   function toggleTheme() {
     var checkbox = document.getElementById("theme-switch");
     if (checkbox.checked) {
-      document.body.className = "light-mode";
+      document.body.className = "night-mode";
     } else {
       document.body.className = "";
     }
@@ -330,12 +393,18 @@
       document.getElementById("video-description").style.display = "none";
     }
 
-    if (track.link) {
-      document.getElementById("video-link").setAttribute("href", track.link);
-      document.getElementById("video-link").innerHTML = "Download File / View Source Link";
-      document.getElementById("video-link").style.display = "inline-block";
+    if (track.sourceLink) {
+      document.getElementById("video-source-link").setAttribute("href", track.sourceLink);
+      document.getElementById("video-source-link").style.display = "inline-block";
     } else {
-      document.getElementById("video-link").style.display = "none";
+      document.getElementById("video-source-link").style.display = "none";
+    }
+
+    if (track.downloadLink) {
+      document.getElementById("video-download-link").setAttribute("href", track.downloadLink);
+      document.getElementById("video-download-link").style.display = "inline-block";
+    } else {
+      document.getElementById("video-download-link").style.display = "none";
     }
   }
 
